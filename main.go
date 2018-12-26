@@ -4,7 +4,8 @@ import (
     "encoding/json"
     "github.com/gorilla/mux"
     "log"
-    "net/http"
+		"net/http"
+		"time"
 )
 
 // The person Type (more like an object)
@@ -18,6 +19,14 @@ type Address struct {
     City  string `json:"city,omitempty"`
     State string `json:"state,omitempty"`
 }
+
+type Todo struct {
+		Name string `json:"name"`
+		Completed bool `json:"completed"`
+		Due time.Time `json:"due"`
+}
+
+type Todos []Todo
 
 var people []Person
 
@@ -70,4 +79,13 @@ func main() {
     router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
     router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
     log.Fatal(http.ListenAndServe(":8000", router))
+}
+
+// Todo func 
+func TodoIndex(w http.ResponseWriter, r *http.Request) {
+	todos := Todos{
+			Todo{Name: "Write presentation"},
+			Todo{Name: "Host meetup"},
+	}
+	json.NewEncoder(w).Encode(todos)
 }
